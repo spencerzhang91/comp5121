@@ -100,11 +100,21 @@ if __name__ == "__main__":
                  {'id':14, 'ANF':50, 'ANMF':1929.7,'NDPC':882, 'dicision':'R','dis2p':0},
                  {'id':15, 'ANF':45, 'ANMF':3370.0,'NDPC':707, 'dicision':'U','dis2p':0}]
 
+
+    custormers = [{'id':1, 'NS':0.5, 'NA':0.2, 'AP':'Y', 'AM':12},
+                  {'id':2, 'NS':0.7, 'NA':0.5, 'AP':'Y', 'AM':15},
+                  {'id':3, 'NS':0.9, 'NA':0.7, 'AP':'N', 'AM':0},
+                  {'id':4, 'NS':1.0, 'NA':0.5, 'AP':'Y', 'AM':44},
+                  {'id':5, 'NS':0.8, 'NA':0.4, 'AP':'N', 'AM':0},
+                  {'id':6, 'NS':0.7, 'NA':0.4, 'AP':'Y', 'AM':31}]
+
     point = [{'id':16, 'ANF':25, 'ANMF':2050.0,'NDPC':790, 'dicision':'','dis2p':0}]
     point2 = [{'id':17, 'ANF':58, 'ANMF':0,'NDPC':650, 'dicision':'','dis2p':0}]
 
-    K = 5
+    point3 = [{'id':16, 'NS':0.3, 'NA':0.8, 'AP':'', 'AM':0}]
 
+    K = 5
+    '''
     # a)
     neighbors_a = neighbors.copy()
     print("\n\nFrom below is problem a)\n")
@@ -129,3 +139,5 @@ if __name__ == "__main__":
     norm_point_r = norm(point2, max_values_r, min_values_r, 'ANF', 'NDPC')
 
     knn_regression(norm_neighbors_r, norm_point_r[0], K)
+    '''
+    knn(custormers, point3[0], 3)
