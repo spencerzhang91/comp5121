@@ -66,7 +66,11 @@ for attr in attrs_dict.keys():
     print('info', info)
     print("test ended")
 """
+
+
 attr_list = ['gender', 'sp', 'ast', 'tpr']
+training_total_c = list(*(c.execute("SELECT COUNT(*) FROM training")))
+# print('fuck!!!', training_total_c[0])
 for row in list(c.execute("SELECT * FROM testing")):
 
     p_c = list(*(c.execute("SELECT COUNT(*) FROM training WHERE reco = '%s'" % str(row[-1]))))
@@ -75,12 +79,19 @@ for row in list(c.execute("SELECT * FROM testing")):
     print("test of this row: ", row, "goes below-->\n{")
     for cl in ['L', 'S', 'P']:
         print("\t # Probability of classified as class %s -> " % cl, '{')
-
+        joint_probability = 1
         for attr in attr_list:
             print('\t\t',cl, '-->', attr, '=', row[attr_list.index(attr)+1])
-            # variable attr_c is the number of
+            # variable attr_c is the number of attribute of certain value given the specific class label
             attr_c = list(*c.execute("SELECT COUNT(*) FROM training WHERE reco = '%s' AND %s = '%s'" % (cl, attr, row[attr_list.index(attr)+1])))[0]
             print("\t\t attr count: ", attr_c)
-            print("\t Conditional Probability: P(%s=%s|%s) =" % (attr,row[attr_list.index(attr)+1], cl), "%s / %s" % (attr_c, list(*c.execute("SELECT COUNT(*) FROM training WHERE reco = '%s'" % cl))[0]))
+
+            # this line below counts the number of rows that is marked as a certain class label in the training data set
+            class_c = list(*c.execute("SELECT COUNT(*) FROM training WHERE reco = '%s'" % cl))[0]
+
+            print("\t\t class count: ", class_c)
+            print("\t\t# Conditional Probability: P(%s=%s|%s) =" % (attr,row[attr_list.index(attr)+1], cl), "%s / %s" % (attr_c, class_c))
+            joint_probability *= (attr_c / class_c)
+        print("\t>>> joint probability: ", joint_probability * class_c/training_total_c[0])
         print('\t}')
     print("}\n-*-*-*-*-*-End of listing of previous row-*-*-*-*-*-\n\n\n")
