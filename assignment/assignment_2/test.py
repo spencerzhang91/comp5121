@@ -92,6 +92,7 @@ for row in list(c.execute("SELECT * FROM testing")):
             print("\t\t class count: ", class_c)
             print("\t\t# Conditional Probability: P(%s=%s|%s) =" % (attr,row[attr_list.index(attr)+1], cl), "%s / %s" % (attr_c, class_c))
             joint_probability *= (attr_c / class_c)
-        print("\t>>> joint probability: ", joint_probability * class_c/training_total_c[0])
+            print("\t\t P(%s)" % cl, "=", "%d / %d" % (class_c, training_total_c[0]))
+        print("\t>>> joint probability of being class %s for test_row %d: " % (cl, row[0]), joint_probability * class_c/training_total_c[0])
         print('\t}')
     print("}\n-*-*-*-*-*-End of listing of previous row-*-*-*-*-*-\n\n\n")
