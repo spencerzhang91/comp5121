@@ -30,18 +30,16 @@ def kmeans(dataset, k=2):
     curr_round_means = []
     for i in range(k):
         curr_round_means.append(dataset[i][1:])  # the [1:] is to exclude the ref(id)
-    # random_ptrs = [item for item in dataset if item not in curr_round_means]
-    print("last_round_means:", last_round_means)
-    print("curr_round_means:", curr_round_means)
+    # random_ptrs = [item for item in dataset if item not in curr_round_means] <- this is for k-medoid not k-means
     round = 0
     k_clusters = init_k_clusters(k)
     while not is_converged(last_round_means, curr_round_means) and round < 100:
-        print("round -> ", round)
+        print('Iteration round -> ', round)
         k_clusters = init_k_clusters(k)
-        print("last_round_means:", last_round_means)
-        print("curr_round_means:", curr_round_means)
+        print('last_round_means:', last_round_means)
+        print('curr_round_means:', curr_round_means)
         last_round_means = curr_round_means
-        for pt in dataset: # rdpt is a list (a row of dataset)
+        for pt in dataset:  # rdpt is a list (a row of dataset)
             min_dist = dist(pt[1:], curr_round_means[0])  # the [1:] is to exclude the ref(id)
             curr_closest_cluster = 0  # the subfix of current closest cluster mean among k clusters, initially set 0
             for i in range(len(curr_round_means)):
@@ -50,12 +48,20 @@ def kmeans(dataset, k=2):
                     curr_closest_cluster = i
                     min_dist = curr_dist
             k_clusters[curr_closest_cluster].append(pt)
-        print("current k clusters:\n")
-        pprint(k_clusters)
-        # Need to update {last_round_mean and curr_round_mean
+        # print("current k clusters:\n")
+        # pprint(k_clusters)
+        # Need to update last_round_mean and curr_round_mean
         curr_round_means = update_mean(k_clusters)
         round += 1
     return k_clusters
+
+def criteria(k_clusters):
+    """
+    Evaluate the clustering quality by inspecting within and between cluster scatter.
+    :param k_clusters: 3d list
+    :return: a dictionary {W: within cluster scatter, B: between cluster scatter}
+    """
+    pass
 
 
 def is_converged(l1, l2):
@@ -88,7 +94,7 @@ def dist(p1: list, p2: list) -> float:
     :return: number
     """
     if len(p1) != len(p2):
-        raise Exception("Inconsistency in dimenstion.")
+        raise Exception('Inconsistency in dimenstion.')
     distance = 0
     for i in range(len(p1)):
         distance += (p1[i] - p2[i]) ** 2
@@ -133,7 +139,6 @@ def init_k_clusters(k):
     return new_container
 
 
-
 if __name__ == "__main__":
     """
     Here goes multiple test cases of this problem.
@@ -165,4 +170,5 @@ if __name__ == "__main__":
 
     res_clusters = kmeans(dataset, k=2)
     # print("\n\nThe result below:\n")
-    # pprint(res_clusters)
+    print('\n\nFinal partition result:\n')
+    pprint(res_clusters)
