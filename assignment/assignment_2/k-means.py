@@ -21,41 +21,40 @@ def normalization(column):
 def kmeans(dataset, k=2):
     """
     Naive implementation of k-means algorithm.
+    :type k: int
     :param dataset: 2d list of dataset
     :param k: number of desired clusters
     :return: a 3d list containing partitioned dataset
     """
-    k_clusters = []  # this list will include id number (ref) for each point
     last_round_means = [[0] * (len(dataset[0]) - 1)] * k
     curr_round_means = []
     for i in range(k):
-        k_clusters.append([dataset[i]])
         curr_round_means.append(dataset[i][1:])  # the [1:] is to exclude the ref(id)
-    random_ptrs = [item for item in dataset if item not in curr_round_means]
-    print("current k clusters:", k_clusters)
-    print("last_round_mean:", last_round_means)
-    print("curr_round_mean:", curr_round_means)
-    x = 0
-    while not is_converged(last_round_means, curr_round_means) and x < 100:
-        print("x -> ", x)
-        print("current k clusters:\n")
-        pprint(k_clusters)
-        print("last_round_mean:", last_round_means)
-        print("curr_round_mean:", curr_round_means)
+    # random_ptrs = [item for item in dataset if item not in curr_round_means]
+    print("last_round_means:", last_round_means)
+    print("curr_round_means:", curr_round_means)
+    round = 0
+    k_clusters = init_k_clusters(k)
+    while not is_converged(last_round_means, curr_round_means) and round < 100:
+        print("round -> ", round)
+        k_clusters = init_k_clusters(k)
+        print("last_round_means:", last_round_means)
+        print("curr_round_means:", curr_round_means)
         last_round_means = curr_round_means
-        for rdpt in random_ptrs: # rdpt is a list (a row of dataset)
-            min_dist = dist(rdpt[1:], curr_round_means[0])  # the [1:] is to exclude the ref(id)
+        for pt in dataset: # rdpt is a list (a row of dataset)
+            min_dist = dist(pt[1:], curr_round_means[0])  # the [1:] is to exclude the ref(id)
             curr_closest_cluster = 0  # the subfix of current closest cluster mean among k clusters, initially set 0
             for i in range(len(curr_round_means)):
-
-                curr_dist = dist(rdpt[1:], curr_round_means[i])  # the [1:] is to exclude the ref(id)
+                curr_dist = dist(pt[1:], curr_round_means[i])  # the [1:] is to exclude the ref(id)
                 if curr_dist < min_dist:
                     curr_closest_cluster = i
                     min_dist = curr_dist
-            k_clusters[curr_closest_cluster].append(rdpt)
+            k_clusters[curr_closest_cluster].append(pt)
+        print("current k clusters:\n")
+        pprint(k_clusters)
         # Need to update {last_round_mean and curr_round_mean
         curr_round_means = update_mean(k_clusters)
-        x += 1
+        round += 1
     return k_clusters
 
 
@@ -121,6 +120,20 @@ def mean(cluster):
     return [round(val / len(cluster), 4) for val in new_mean]
 
 
+def init_k_clusters(k):
+    """
+    Return an empty k_clusters list with correct structure.
+    For example, when k = 2, should return [[], []]
+    :param k: number of clusters
+    :return: a empty k_cluster list
+    """
+    new_container = []
+    for i in range(k):
+        new_container.append([])
+    return new_container
+
+
+
 if __name__ == "__main__":
     """
     Here goes multiple test cases of this problem.
@@ -148,8 +161,8 @@ if __name__ == "__main__":
 
     dataset = [[ref[i], norm_age[i], sex[i], norm_income[i], married[i], norm_service[i], norm_extra[i]] for i in
                range(len(ref))]
-    pprint(dataset)
+    # pprint(dataset)
 
     res_clusters = kmeans(dataset, k=2)
-    print("\n\nThe result below:\n")
+    # print("\n\nThe result below:\n")
     # pprint(res_clusters)
