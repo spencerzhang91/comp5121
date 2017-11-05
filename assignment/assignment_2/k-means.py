@@ -12,7 +12,7 @@ def normalization(column):
     min_val = min(column)
     norm_col = column.copy()
     for i in range(len(column)):
-        norm_col[i] = (column[i] - min_val) / (max_val - min_val)
+        norm_col[i] = round((column[i] - min_val) / (max_val - min_val), 4)
         # print(round(norm_col[i], 4))
     # print('\n\n')
     return norm_col
@@ -25,49 +25,63 @@ def kmeans(dataset, k=2):
     :param k: number of desired clusters
     :return: a 3d list containing partitioned dataset
     """
-    k_clusters = [] # this list will include id number (ref) for each point
-    last_round_means = []
+    k_clusters = []  # this list will include id number (ref) for each point
+    last_round_means = [[0] * (len(dataset[0]) - 1)] * k
     curr_round_means = []
     for i in range(k):
         k_clusters.append([dataset[i]])
-        curr_round_means.append(dataset[i][1:]) # the [1:] is to exclude the ref(id)
+        curr_round_means.append(dataset[i][1:])  # the [1:] is to exclude the ref(id)
     random_ptrs = [item for item in dataset if item not in curr_round_means]
     print("current k clusters:", k_clusters)
+    print("last_round_mean:", last_round_means)
     print("curr_round_mean:", curr_round_means)
-
-    while is_different(last_round_means, curr_round_means):
+    x = 0
+    while not is_converged(last_round_means, curr_round_means) and x < 100:
+        print("x -> ", x)
+        print("current k clusters:\n")
+        pprint(k_clusters)
+        print("last_round_mean:", last_round_means)
+        print("curr_round_mean:", curr_round_means)
         last_round_means = curr_round_means
-        for rdpt in random_ptrs:
-            # pt is a list (a row of dataset)
-            min_dist = dist(rdpt[1:], curr_round_means[0]) # the [1:] is to exclude the ref(id)
+        for rdpt in random_ptrs: # rdpt is a list (a row of dataset)
+            min_dist = dist(rdpt[1:], curr_round_means[0])  # the [1:] is to exclude the ref(id)
             curr_closest_cluster = 0  # the subfix of current closest cluster mean among k clusters, initially set 0
             for i in range(len(curr_round_means)):
 
-                curr_dist = dist(rdpt[1:], curr_round_means[i]) # the [1:] is to exclude the ref(id)
-                if curr_dist < dist(rdpt[1:], curr_round_means[0]):
+                curr_dist = dist(rdpt[1:], curr_round_means[i])  # the [1:] is to exclude the ref(id)
+                if curr_dist < min_dist:
                     curr_closest_cluster = i
                     min_dist = curr_dist
             k_clusters[curr_closest_cluster].append(rdpt)
         # Need to update {last_round_mean and curr_round_mean
         curr_round_means = update_mean(k_clusters)
+        x += 1
+    return k_clusters
 
 
-def is_different(l1, l2):
+def is_converged(l1, l2):
     """
-    Compare whether two lists are exactly equal.
+    Compare whether two round means are exactly the same (stablized).
     :param l1: list
     :param l2: list
     :return: boolean value
     """
     if len(l1) != len(l2):
-        return False
+        print("\n\n\n\n", "*" * 10)
+        print(l1, '\n', l2, '\n')
+        print("*" * 10, "\n\n\n\n")
+        raise Exception('Two rounds\' mean number integrity broke!')
+
     for i in range(len(l1)):
-        if l1[i] != l2[i]:
-            return False
+        for j in range(len(l1[i])):
+            if len(l1[i]) != len(l2[i]):
+                raise Exception('Dimension of mean vector of two rounds inconsistent!')
+            if abs(l1[i][j] - l2[i][j]) > 0.0001:
+                return False
     return True
 
 
-def dist(p1: list, p2: list) -> int:
+def dist(p1: list, p2: list) -> float:
     """
     Euclidean distance without square root.
     :param p1: list
@@ -81,6 +95,7 @@ def dist(p1: list, p2: list) -> int:
         distance += (p1[i] - p2[i]) ** 2
     return distance
 
+
 def update_mean(clusters: list) -> list:
     """
     Update the mean of current cluster.
@@ -92,20 +107,18 @@ def update_mean(clusters: list) -> list:
         new_means.append(mean(cluster))
     return new_means
 
+
 def mean(cluster):
     """
     Calculate the mean point of a lot of points.
     :param cluster: 2d list of a cluster (a list of points)
     :return: 1d list representing the new mean (a point)
     """
-    new_mean = [0] * (len(cluster[0][0]) - 1)
+    new_mean = [0] * (len(cluster[0]) - 1)
     for pt in cluster:
-        for i in range(len(pt)):
-            new_mean[i] += pt[i+1]
-    return [val / len(cluster) for val in new_mean]
-
-
-
+        for i in range(len(pt) - 1):
+            new_mean[i] += pt[i + 1]
+    return [round(val / len(cluster), 4) for val in new_mean]
 
 
 if __name__ == "__main__":
@@ -138,4 +151,5 @@ if __name__ == "__main__":
     pprint(dataset)
 
     res_clusters = kmeans(dataset, k=2)
-    print(res_clusters)
+    print("\n\nThe result below:\n")
+    # pprint(res_clusters)
