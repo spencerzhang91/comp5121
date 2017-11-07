@@ -21,6 +21,7 @@ def normalization(column):
 def kmeans(dataset, k=2):
     """
     Naive implementation of k-means algorithm.
+    k should in the range of [1, size of dataset]
     :type k: int
     :param dataset: 2d list of dataset
     :param k: number of desired clusters
@@ -55,13 +56,29 @@ def kmeans(dataset, k=2):
         round += 1
     return k_clusters
 
+
 def criteria(k_clusters):
     """
     Evaluate the clustering quality by inspecting within and between cluster scatter.
     :param k_clusters: 3d list
     :return: a dictionary {W: within cluster scatter, B: between cluster scatter}
     """
-    pass
+    w = 0
+    b = 0
+    # steps to calculate wc and bc
+    for cluster in k_clusters:
+        for i in range(len(cluster)):
+            for j in range(len(cluster)):
+                w += dist(cluster[i][1:], cluster[j][1:])  # the [1:] is to exclude the ref(id)
+
+    for i in range(len(k_clusters)):
+        for j in range(len(k_clusters)):
+            if i != j:
+                for k in range(len(k_clusters[i])):
+                    for l in range(len(k_clusters[j])):
+                        b += dist(k_clusters[i][k][1:], k_clusters[j][l][1:])  # the [1:] is to exclude the ref(id)
+
+    return {'Within': 0.5 * 2, 'Between': 0.5 * b}
 
 
 def is_converged(l1, l2):
@@ -172,3 +189,5 @@ if __name__ == "__main__":
     # print("\n\nThe result below:\n")
     print('\n\nFinal partition result:\n')
     pprint(res_clusters)
+    quality = criteria(res_clusters)
+    print(quality)
