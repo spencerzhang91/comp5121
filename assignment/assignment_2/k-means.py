@@ -70,6 +70,7 @@ def criteria(k_clusters):
         for i in range(len(cluster)):
             for j in range(len(cluster)):
                 w += dist(cluster[i][1:], cluster[j][1:])  # the [1:] is to exclude the ref(id)
+                print('w', w)
 
     for i in range(len(k_clusters)):
         for j in range(len(k_clusters)):
@@ -77,8 +78,9 @@ def criteria(k_clusters):
                 for k in range(len(k_clusters[i])):
                     for l in range(len(k_clusters[j])):
                         b += dist(k_clusters[i][k][1:], k_clusters[j][l][1:])  # the [1:] is to exclude the ref(id)
+                        print('b', b)
 
-    return {'Within': 0.5 * 2, 'Between': 0.5 * b}
+    return {'Within': 0.5 * w, 'Between': 0.5 * b}
 
 
 def is_converged(l1, l2):
@@ -185,7 +187,7 @@ if __name__ == "__main__":
                range(len(ref))]
     # pprint(dataset)
 
-    res_clusters = kmeans(dataset, k=2)
+    res_clusters = kmeans(dataset, k=3)
     # print("\n\nThe result below:\n")
     print('\n\nFinal partition result:\n')
     pprint(res_clusters)
