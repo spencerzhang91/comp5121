@@ -34,11 +34,11 @@ def kmeans(dataset, k=2):
     # random_ptrs = [item for item in dataset if item not in curr_round_means] <- this is for k-medoid not k-means
     round = 0
     k_clusters = init_k_clusters(k)
-    while not is_converged(last_round_means, curr_round_means) and round < 100:
-        print('Iteration round -> ', round)
+    while not is_converged(last_round_means, curr_round_means):
+        # print('Iteration round -> ', round)
         k_clusters = init_k_clusters(k)
-        print('last_round_means:', last_round_means)
-        print('curr_round_means:', curr_round_means)
+        # print('last_round_means:', last_round_means)
+        # print('curr_round_means:', curr_round_means)
         last_round_means = curr_round_means
         for pt in dataset:  # rdpt is a list (a row of dataset)
             min_dist = dist(pt[1:], curr_round_means[0])  # the [1:] is to exclude the ref(id)
@@ -54,6 +54,7 @@ def kmeans(dataset, k=2):
         # Need to update last_round_mean and curr_round_mean
         curr_round_means = update_mean(k_clusters)
         round += 1
+    # print("Total %d iterations!" % round)
     return k_clusters
 
 
@@ -70,17 +71,42 @@ def criteria(k_clusters):
         for i in range(len(cluster)):
             for j in range(len(cluster)):
                 w += dist(cluster[i][1:], cluster[j][1:])  # the [1:] is to exclude the ref(id)
-                print('w', w)
-
+                # print('w', w)
     for i in range(len(k_clusters)):
         for j in range(len(k_clusters)):
             if i != j:
                 for k in range(len(k_clusters[i])):
                     for l in range(len(k_clusters[j])):
                         b += dist(k_clusters[i][k][1:], k_clusters[j][l][1:])  # the [1:] is to exclude the ref(id)
-                        print('b', b)
+                        # print('b', b)
 
     return {'Within': 0.5 * w, 'Between': 0.5 * b}
+
+
+def best_k_number(dataset):
+    """
+    Using elbow method to find the best cluster number.
+    :param dataset: list
+    :return: int
+    """
+    datasize = len(dataset)
+    clusters = kmeans(dataset, 1)
+    cq = criteria(clusters)
+    last_wscatter = cq['Within']
+    last_elbow = 0
+    for i in range(2, datasize + 1):
+        clusters = kmeans(dataset, i)
+        cq = criteria(clusters)  # cq: clustering quality
+        wscatter = cq['Within']
+        elbow = abs(wscatter - last_wscatter)
+        if elbow < last_elbow:
+            # print(elbow)
+            pass
+        else:
+            # print(elbow)
+            pass
+        last_wscatter = wscatter
+        last_elbow = elbow
 
 
 def is_converged(l1, l2):
@@ -100,7 +126,7 @@ def is_converged(l1, l2):
         for j in range(len(l1[i])):
             if len(l1[i]) != len(l2[i]):
                 raise Exception('Dimension of mean vector of two rounds inconsistent!')
-            if abs(l1[i][j] - l2[i][j]) > 0.0001:
+            if abs(l1[i][j] - l2[i][j]) > 0:
                 return False
     return True
 
@@ -187,9 +213,8 @@ if __name__ == "__main__":
                range(len(ref))]
     # pprint(dataset)
 
-    res_clusters = kmeans(dataset, k=3)
-    # print("\n\nThe result below:\n")
-    print('\n\nFinal partition result:\n')
+    res_clusters = kmeans(dataset, k=8)
     pprint(res_clusters)
-    quality = criteria(res_clusters)
-    print(quality)
+    print(criteria(res_clusters))
+    # bstk = best_k_number(dataset)
+    # print(criteria([[dataset[12]],[dataset[i-1] for i in [6,9,10,11,12]],[dataset[i-1] for i in [1,2,3,4,5,7,8,14]]]))
