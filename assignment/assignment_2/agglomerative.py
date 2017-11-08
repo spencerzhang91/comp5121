@@ -1,6 +1,6 @@
 # An implementation of hierarchical agglomerative
 from pprint import pprint
-from kmeans import normalization, dist
+from k_means import normalization, dist
 
 
 def AggloHCsinlink(dataset: list):
@@ -36,4 +36,5 @@ def gen_dist_matrix(dataset):
     :param dataset: 2d list
     :return: ad list
     '''
+    N = len(dataset)
     return [[]]
