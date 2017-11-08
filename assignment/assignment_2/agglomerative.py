@@ -1,6 +1,6 @@
 # An implementation of hierarchical agglomerative
 from pprint import pprint
-from kmeans import normalization
+from kmeans import normalization, dist
 
 
 def AggloHCsinlink(dataset: list):
@@ -18,6 +18,22 @@ def AggloHCsinlink(dataset: list):
         for i in range(len(distmx)):
             curr_min = None
             for j in range(len(distmx)):
-                pass
-                # TODO
-           
+                curr_dist = dist(dataset[i], dataset[j])
+                if i == j:
+                    continue
+                if curr_min is None:
+                    curr_min = curr_dist
+                if curr_min > curr_dist:
+                    curr_min = curr_dist
+            min_dist_array.append(curr_min)
+            print(min_dist_array)
+        cluster_num -= 1
+
+
+def gen_dist_matrix(dataset):
+    '''
+    Generates the distance matrix for a dataset.
+    :param dataset: 2d list
+    :return: ad list
+    '''
+    return [[]]
