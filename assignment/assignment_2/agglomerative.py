@@ -36,5 +36,6 @@ def gen_dist_matrix(dataset):
     :param dataset: 2d list
     :return: ad list
     '''
+    # TODO
     N = len(dataset)
     return [[]]
