@@ -30,7 +30,6 @@ c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (11,1);')
 c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (4,3);')
 c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (6,5);')
 c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (7,6);')
-c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (8,6);')
 c.execute('INSERT INTO webview (litemset1, litemset2) VALUES (8,7);')
 
 conn.commit()

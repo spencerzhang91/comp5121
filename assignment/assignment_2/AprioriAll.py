@@ -1,13 +1,14 @@
 # AprioriAll algorithm to mine sequencial pattern.
 
-def apriori(dataset):
-    '''
-    Apriori algorithm finding out interesting itemsets.
-    :param dataset: dataset, 2d list
-    :return: 2d list, containing all interesting itemsets
-    '''
-    pass
-
+def is_in(subseq, seq):
+    """
+    Whether sbuseq is in seq.
+    :param subseq: list
+    :param seq: list
+    :return: bool
+    """
+    for i in subseq:
+        try
 
 
 if __name__ == '__main__':
